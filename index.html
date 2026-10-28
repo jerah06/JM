@@ -1,0 +1,165 @@
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sneaker HOUSE Ecoland</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  .cart-drawer{transition:transform .3s ease;}
+  .cart-drawer.closed{transform:translateX(100%);}
+  html{scroll-behavior:smooth;}
+</style>
+</head>
+<body class="bg-neutral-50 text-neutral-900">
+<nav class="sticky top-0 z-30 bg-white/90 backdrop-blur border-b">
+  <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+    <div class="flex items-center space-x-3">
+    <img src="images/logo.png" alt="Sneaker HOUSE Logo" class="h-16 w-auto object-contain" onerror="this.src='images/logo.jpg'; this.onerror=function(){ this.src='logo.png'; }">
+    <span class="text-xl font-bold tracking-tight text-gray-900">Sneaker HOUSE Ecoland</span>
+</div>
+    <div class="flex items-center gap-3">
+      <button id="loginBtn" class="px-3 py-1 rounded border">Login</button>
+      <button id="signupBtn" class="px-3 py-1 rounded bg-black text-white">Sign Up</button>
+      <button id="cartBtn" class="relative p-2">
+      🛒
+      <span id="cartCount" class="absolute -top-1 -right-1 bg-red-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">0</span>
+    </button>
+    </div>
+  </div>
+</nav>
+
+<section class="bg-black text-white py-20 text-center">
+  <h1 class="text-4xl md:text-6xl font-extrabold">Premium Kicks. Local Prices.</h1>
+  <p class="mt-4 text-neutral-300">Quality sneakers for Davao. No compromise.</p>
+  <a href="#catalog" class="inline-block mt-6 bg-white text-black font-bold px-8 py-3 rounded-full shadow hover:bg-neutral-200 transition">Go Shopping Shoes 👟</a>
+</section>
+
+<main id="catalog" class="max-w-7xl mx-auto px-4 py-10">
+  <div class="flex flex-wrap gap-2 mb-6" id="filters">
+    <button data-cat="all" class="filter px-4 py-2 rounded-full bg-black text-white">All</button>
+    <button data-cat="basketball" class="filter px-4 py-2 rounded-full bg-neutral-200">Basketball</button>
+    <button data-cat="lifestyle" class="filter px-4 py-2 rounded-full bg-neutral-200">Lifestyle/Running</button>
+    <button data-cat="promo" class="filter px-4 py-2 rounded-full bg-neutral-200">Promo Bins</button>
+  </div>
+  <div id="grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+</main>
+
+<section class="bg-white border-t py-12">
+  <div class="max-w-7xl mx-auto px-4 grid sm:grid-cols-2 lg:grid-cols-5 gap-6">
+    <div><h3 class="font-bold">Sizing</h3><p>EUR 36-40 Women, EUR 41-46 Men</p></div>
+    <div><h3 class="font-bold">Freebies</h3><p>Free socks, shoe box, shoe bag per purchase</p></div>
+    <div><h3 class="font-bold">Financing</h3><p>Salmon Installments (utang plans)</p></div>
+    <div><h3 class="font-bold">Delivery</h3><p>COD in Davao City; nationwide via J&T Express</p></div>
+    <div><h3 class="font-bold">Location</h3><p>Maya St, Ecoland, Talomo, Davao City (beside AMWSLAI). 10AM-9PM Daily</p></div>
+  </div>
+</section>
+
+<footer class="bg-black text-white py-6 text-center text-sm">© 2026 Sneaker HOUSE Ecoland</footer>
+
+<div id="modalOverlay" class="fixed inset-0 bg-black/50 hidden z-50 flex items-center justify-center">
+  <div id="modalBox" class="bg-white rounded-xl p-6 w-80">
+    <h3 id="modalTitle" class="font-bold text-lg mb-4"></h3>
+    <div id="modalBody"></div>
+    <button id="modalClose" class="mt-4 w-full bg-neutral-200 py-2 rounded">Close</button>
+  </div>
+</div>
+<aside id="drawer" class="cart-drawer closed fixed top-0 right-0 w-80 max-w-full h-full bg-white z-50 shadow-xl flex flex-col">
+  <div class="p-4 border-b flex justify-between items-center">
+    <h2 class="font-bold">Your Cart</h2>
+    <button id="closeCart">✕</button>
+  </div>
+  <div id="cartItems" class="flex-1 overflow-y-auto p-4 space-y-3"></div>
+  <div class="p-4 border-t">
+    <div class="flex justify-between font-bold mb-3"><span>Total</span><span id="total">₱0</span></div>
+    <button id="checkout" class="w-full bg-green-600 text-white py-2 rounded">Checkout via WhatsApp/Facebook</button>
+  </div>
+</aside>
+
+<script>
+const products = [
+ {name:'Ja Morant 3 "Day Break"',brand:'Nike Inspired',price:1999,cat:'basketball',img:'images/JaMorant.jpg'},
+ {name:'Sabrina 2 "Lily"',brand:'Nike Inspired',price:1999,cat:'basketball',img:'images/Sabrina.jpg'},
+ {name:'Kobe 10 Elite Low "Chester"',brand:'Nike/Kobe Inspired',price:1899,cat:'basketball',img:'images/Kobe 10 Elite.jpg'},
+ {name:'Luka 77 "Black Grey Red"',brand:'Jordan Inspired',price:1899,cat:'basketball',img:'images/Luka 77.jpg'},
+ {name:'LeBron Ambassador 13',brand:'Nike Inspired',price:1899,cat:'basketball',img:'images/LeBron Ambassador.jpg'},
+ {name:'Giannis Immortality Series',brand:'Nike Inspired',price:1599,cat:'basketball',img:'images/Giannis Immortality Series.jpg'},
+ {name:'Nocta Hotstep 2',brand:'Nike x Drake Inspired',price:1799,cat:'lifestyle',img:'images/Daily Lifestyle & Streetwear Sneakers.jpg'},
+ {name:'NB 530 (All Colorways)',brand:'New Balance Inspired',price:1699,cat:'lifestyle',img:'images/New Balance 530.jpg'},
+ {name:'Cloudtilt',brand:'On Running Inspired',price:1599,cat:'lifestyle',img:'images/Cloudtilt.jpg'},
+ {name:'Vomero 5 Series',brand:'Nike Inspired',price:1499,cat:'lifestyle',img:'images/Vomero 5 Series.jpg'},
+ {name:'Puma Speedcats',brand:'Puma Inspired',price:1399,cat:'lifestyle',img:'images/Puma Speedcat.jpg'},
+ {name:'"2 for ₱999" Flat-Rate Pairs',brand:'Mixed Styles',price:999,cat:'promo',img:'',bundle:true},
+];
+let cart=[];
+const grid=document.getElementById('grid');
+const cartCount=document.getElementById('cartCount');
+function showToast(msg){
+  let t=document.getElementById('toast');
+  if(!t){t=document.createElement('div');t.id='toast';t.className='fixed bottom-6 left-1/2 -translate-x-1/2 bg-black text-white px-4 py-2 rounded shadow z-50';document.body.appendChild(t);}
+  t.textContent=msg;t.classList.remove('hidden');
+  clearTimeout(t._t);t._t=setTimeout(()=>t.classList.add('hidden'),1500);
+}
+function render(cat='all'){
+  grid.innerHTML='';
+  products.filter(p=>cat==='all'||p.cat===cat).forEach(p=>{
+    const card=document.createElement('div');
+    card.className='bg-white rounded-xl shadow p-4 flex flex-col';
+    const imgHtml = p.img ? `<img src="${p.img}" alt="${p.name}" class="w-full h-48 object-cover rounded-lg mb-3">` : `<div class="w-full h-48 bg-neutral-200 rounded-lg mb-3 flex items-center justify-center text-neutral-500">Bundle Bin</div>`;
+    card.innerHTML = `${imgHtml}<h3 class="font-bold">${p.name}</h3><p class="text-sm text-neutral-500">${p.brand}</p><p class="text-sm mt-1">${p.bundle?'Bundle deal: 2 pairs for ₱999':''}</p><div class="mt-auto flex items-center justify-between pt-3"><span class="font-bold">₱${p.price}</span><button class="add bg-black text-white px-3 py-1 rounded" data-name="${p.name}" data-price="${p.price}" data-img="${p.img}" data-brand="${p.brand}">Add to Cart</button></div>`;
+    grid.appendChild(card);
+  });
+}
+render();
+grid.addEventListener('click',(e)=>{
+  const btn=e.target.closest('.add');
+  if(!btn) return;
+  const n=btn.dataset.name,pr=+btn.dataset.price,im=btn.dataset.img,br=btn.dataset.brand;
+  const ex=cart.find(i=>i.name===n);
+  if(ex) ex.qty++; else cart.push({name:n,price:pr,img:im,brand:br,qty:1});
+  cartCount.textContent=cart.reduce((a,c)=>a+c.qty,0);
+  updateCart();
+  showToast('Item added to cart!');
+});
+document.querySelectorAll('.filter').forEach(b=>b.addEventListener('click',()=>{
+  document.querySelectorAll('.filter').forEach(x=>{x.classList.remove('bg-black','text-white');x.classList.add('bg-neutral-200');});
+  b.classList.add('bg-black','text-white');b.classList.remove('bg-neutral-200');
+  render(b.dataset.cat);
+}));
+function updateCart(){
+  const ci=document.getElementById('cartItems');
+  ci.innerHTML='';
+  let total=0;
+  cart.forEach(i=>{
+    total+=i.price*i.qty;
+    const d=document.createElement('div');
+    d.className='flex gap-3 items-center border-b pb-2';
+    const imgHtml = i.img ? `<img src="${i.img}" class="w-12 h-12 object-cover rounded">` : `<div class="w-12 h-12 bg-neutral-200 rounded"></div>`;
+    d.innerHTML=`${imgHtml}<div class="flex-1"><p class="font-semibold text-sm">${i.name}</p><p class="text-xs text-neutral-500">${i.brand}</p><p class="text-xs text-neutral-500">₱${i.price} x ${i.qty}</p></div><div class="flex gap-1"><button class="dec px-2" data-n="${i.name}">-</button><button class="inc px-2" data-n="${i.name}">+</button><button class="rm px-2 text-red-600" data-n="${i.name}">x</button></div>`;
+    ci.appendChild(d);
+  });
+  document.getElementById('total').textContent='₱'+total;
+  document.getElementById('cartCount').textContent=cart.reduce((a,c)=>a+c.qty,0);
+  ci.querySelectorAll('.inc').forEach(b=>b.onclick=()=>{cart.find(i=>i.name===b.dataset.n).qty++;updateCart();});
+  ci.querySelectorAll('.dec').forEach(b=>b.onclick=()=>{const it=cart.find(i=>i.name===b.dataset.n);it.qty--;if(it.qty<=0)cart=cart.filter(i=>i.name!==it.name);updateCart();});
+  ci.querySelectorAll('.rm').forEach(b=>b.onclick=()=>{cart=cart.filter(i=>i.name!==b.dataset.n);updateCart();});
+}
+const drawer=document.getElementById('drawer'),overlay=document.getElementById('overlay');
+document.getElementById('cartBtn').onclick=()=>{drawer.classList.remove('closed');overlay.classList.remove('hidden');};
+document.getElementById('closeCart').onclick=()=>{drawer.classList.add('closed');overlay.classList.add('hidden');};
+overlay.onclick=()=>{drawer.classList.add('closed');overlay.classList.add('hidden');};
+document.getElementById('checkout').onclick=()=>{
+  if(!cart.length){alert('Cart is empty');return;}
+  let msg='Order Summary:\n';
+  cart.forEach(i=>msg+=`${i.name} x${i.qty} - ₱${i.price*i.qty}\n`);
+  msg+='Total: ₱'+cart.reduce((a,c)=>a+c.price*c.qty,0);
+  alert(msg);
+};
+document.getElementById('loginBtn').onclick=()=>openModal('Login','<input class="w-full border p-2 mb-2" placeholder="Email"><input class="w-full border p-2 mb-2" type="password" placeholder="Password"><button class="w-full bg-black text-white py-2 rounded">Login</button>');
+document.getElementById('signupBtn').onclick=()=>openModal('Sign Up','<input class="w-full border p-2 mb-2" placeholder="Name"><input class="w-full border p-2 mb-2" placeholder="Email"><input class="w-full border p-2 mb-2" type="password" placeholder="Password"><button class="w-full bg-black text-white py-2 rounded">Create Account</button>');
+function openModal(title,html){document.getElementById('modalTitle').textContent=title;document.getElementById('modalBody').innerHTML=html;document.getElementById('modalOverlay').classList.remove('hidden');}
+document.getElementById('modalClose').onclick=()=>document.getElementById('modalOverlay').classList.add('hidden');
+document.getElementById('modalOverlay').onclick=(e)=>{if(e.target.id==='modalOverlay')document.getElementById('modalOverlay').classList.add('hidden');};
+</script>
+</body>
+</html>
